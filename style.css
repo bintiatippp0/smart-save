@@ -178,6 +178,72 @@ input[type="text"], input[type="number"] {
     margin-left: 10px;
 }
 
+.health-card {
+    background: #fff;
+    border-left: 5px solid #8D6E63; /* Aksen Coklat Sedang */
+}
+
+.health-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    border-bottom: 1px dashed #eee;
+    padding-bottom: 10px;
+}
+
+.health-title h3 {
+    font-size: 1.1rem;
+    margin-bottom: 2px;
+}
+
+.health-title small {
+    font-size: 0.75rem;
+    color: #888;
+}
+
+/* Lingkaran Skor */
+.score-circle {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: #eee;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-size: 1.2rem;
+    color: #5D4037;
+    border: 3px solid #D7CCC8;
+}
+
+.health-stats {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.stat-item {
+    background: #fdfbf7;
+    padding: 10px;
+    border-radius: 8px;
+    width: 48%;
+    text-align: center;
+}
+
+.stat-label {
+    display: block;
+    font-size: 0.7rem;
+    color: #8D6E63;
+    margin-bottom: 5px;
+}
+
+.stat-value {
+    font-weight: bold;
+    font-size: 0.9rem;
+    color: #3E2723;
+}
+
 footer {
     text-align: center;
     margin-top: 30px;
