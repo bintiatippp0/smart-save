@@ -235,3 +235,27 @@ window.removeTransaction = removeTransaction;
 
 // Inisialisasi awal
 updateUI();
+
+// [TAMBAHAN: LOGIKA SCROLL TO TOP]
+
+const scrollBtn = document.getElementById("scrollToTopBtn");
+
+// Tampilkan atau sembunyikan tombol saat user scroll
+window.onscroll = function() { scrollFunction() };
+
+function scrollFunction() {
+    // Tombol akan muncul jika scroll lebih dari 300px dari atas
+    if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+        scrollBtn.style.display = "block";
+    } else {
+        scrollBtn.style.display = "none";
+    }
+}
+
+// Fungsi yang dipanggil saat tombol diklik: Menggulir halaman ke atas
+window.scrollToTop = function() {
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth' // Membuat pergerakan scroll menjadi halus
+    });
+}
