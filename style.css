@@ -32,7 +32,7 @@ header h1 { color: var(--primary-brown); margin-bottom: 5px;}
     border-left: 5px solid var(--primary-brown);
 }
 
-/* --- 1. Balance Card --- */
+
 .balance-card h2 { font-size: 2rem; margin-top: 5px; color: var(--primary-brown); }
 
 /* --- 2. Health Card (Fitur Baru) --- */
@@ -69,7 +69,7 @@ header h1 { color: var(--primary-brown); margin-bottom: 5px;}
     font-style: italic; color: var(--secondary-brown);
 }
 
-/* --- 3. Target Card --- */
+
 .target-header { display: flex; justify-content: space-between; align-items: center; }
 .btn-small {
     background: var(--secondary-brown); color: white; border: none;
@@ -85,7 +85,7 @@ header h1 { color: var(--primary-brown); margin-bottom: 5px;}
 }
 .target-status { font-size: 0.85rem; text-align: right; font-weight: 600; }
 
-/* --- Form Transaksi --- */
+
 .transaction-form {
     background: var(--white); padding: 20px; border-radius: 15px;
     box-shadow: 0 4px 10px rgba(93, 64, 55, 0.1); margin-bottom: 20px;
@@ -107,7 +107,7 @@ input[type="text"], input[type="number"] {
 }
 .btn-submit:hover { background: #3e2723; }
 
-/* --- Riwayat List --- */
+
 .list { list-style-type: none; }
 .list li {
     background: var(--white); border-radius: 8px; padding: 10px 15px;
@@ -122,6 +122,18 @@ input[type="text"], input[type="number"] {
     background: var(--accent-red); color: white; border: 0;
     border-radius: 5px; padding: 2px 6px; font-size: 12px;
     cursor: pointer; margin-left: 10px;
+}
+
+/* Untuk Chrome, Safari, Edge, Opera */
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Untuk Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
 }
 
 footer {
