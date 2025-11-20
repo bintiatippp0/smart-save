@@ -124,14 +124,14 @@ input[type="text"], input[type="number"] {
     cursor: pointer; margin-left: 10px;
 }
 
-/* Untuk Chrome, Safari, Edge, Opera */
+
 input[type=number]::-webkit-outer-spin-button,
 input[type=number]::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
 
-/* Untuk Firefox */
+
 input[type=number] {
   -moz-appearance: textfield;
 }
@@ -141,24 +141,24 @@ footer {
 }
 
 #scrollToTopBtn {
-    display: none; /* Tombol disembunyikan secara default */
-    position: fixed; /* Posisi selalu tetap di layar */
-    bottom: 25px; /* Jarak dari bawah */
-    right: 25px; /* Jarak dari kanan */
-    z-index: 99; /* Pastikan tombol berada di atas semua elemen */
+    display: none; 
+    position: fixed; 
+    bottom: 25px; 
+    right: 25px;
+    z-index: 99; 
     border: none; 
     outline: none;
     
-    /* WARNA COKLAT YANG DIUBAH KE BENTUK PERSEGI */
+  
     background-color: var(--primary-brown); 
-    color: var(--light-brown); /* Warna panah lebih terang */
+    color: var(--light-brown); 
     
     cursor: pointer; 
-    width: 45px; /* Lebar tombol */
-    height: 45px; /* Tinggi tombol */
-    border-radius: 10px; /* Membuat sudut membulat (rounded square) */
+    width: 45px; 
+    height: 45px; 
+    border-radius: 10px; 
     font-size: 20px;
-    display: flex; /* Untuk memposisikan panah di tengah */
+    display: flex; 
     justify-content: center;
     align-items: center;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
