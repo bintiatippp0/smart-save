@@ -141,24 +141,31 @@ footer {
 }
 
 #scrollToTopBtn {
-    display: none; 
-    position: fixed; 
-    bottom: 20px; 
-    right: 20px;
-    z-index: 99; 
+    display: none; /* Tombol disembunyikan secara default */
+    position: fixed; /* Posisi selalu tetap di layar */
+    bottom: 25px; /* Jarak dari bawah */
+    right: 25px; /* Jarak dari kanan */
+    z-index: 99; /* Pastikan tombol berada di atas semua elemen */
     border: none; 
     outline: none;
+    
+    /* WARNA COKLAT YANG DIUBAH KE BENTUK PERSEGI */
     background-color: var(--primary-brown); 
-    color: white; 
+    color: var(--light-brown); /* Warna panah lebih terang */
+    
     cursor: pointer; 
-    padding: 10px 15px; 
-    border-radius: 50%; 
-    font-size: 18px;
-    line-height: 1; 
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    transition: background-color 0.3s;
+    width: 45px; /* Lebar tombol */
+    height: 45px; /* Tinggi tombol */
+    border-radius: 10px; /* Membuat sudut membulat (rounded square) */
+    font-size: 20px;
+    display: flex; /* Untuk memposisikan panah di tengah */
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    transition: background-color 0.3s, transform 0.2s;
 }
 
 #scrollToTopBtn:hover {
-    background-color: #3e2723; 
+    background-color: #3e2723; /* Coklat lebih gelap saat di-hover */
+    transform: translateY(-2px); /* Efek sedikit terangkat */
 }
