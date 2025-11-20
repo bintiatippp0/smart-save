@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DompetKopi - Catatan Keuangan</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Budgetin Aja</h1>
+            <p>Kelola uangmu, capai targetmu.</p>
+        </header>
+
+        <section class="dashboard">
+            <div class="card balance-card">
+                <h3>Saldo Saat Ini</h3>
+                <h2 id="total-balance">Rp 0</h2>
+            </div>
+
+            <div class="card target-card">
+                <div class="target-header">
+                    <h3>Target Tabungan</h3>
+                    <button id="edit-target-btn" class="btn-small">Atur Target</button>
+                </div>
+                <p class="target-amount">Target: <span id="target-value">Rp 0</span></p>
+                <div class="progress-container">
+                    <div class="progress-bar" id="progress-bar"></div>
+                </div>
+                <p class="target-status" id="target-status">0% Tercapai</p>
+            </div>
+        </section>
+
+        <section class="transaction-form">
+            <h3>Tambah Transaksi</h3>
+            <form id="form-transaksi">
+                <div class="form-group">
+                    <label>Keterangan</label>
+                    <input type="text" id="text" placeholder="Contoh: Kembalian, Beli Barang" required>
+                </div>
+                <div class="form-group">
+                    <label>Jumlah (Rp)</label>
+                    <input type="number" id="amount" placeholder="0" required>
+                </div>
+                <div class="form-group radio-group">
+                    <label>
+                        <input type="radio" name="type" value="pemasukan" checked> Pemasukan
+                    </label>
+                    <label>
+                        <input type="radio" name="type" value="pengeluaran"> Pengeluaran
+                    </label>
+                </div>
+                <button type="submit" class="btn-submit">Tambah Transaksi</button>
+            </form>
+        </section>
+
+        <section class="history">
+            <h3>Riwayat Transaksi</h3>
+            <ul id="list" class="list">
+                </ul>
+        </section>
+
+        <footer>
+            <p>Dibuat oleh <strong>[Binti Eggi]</strong> &copy; 2025</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
