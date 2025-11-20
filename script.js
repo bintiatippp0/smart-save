@@ -84,7 +84,7 @@ function analyzeHealth(currentBalance) {
     if (score >= 50) {
         scoreCircleEl.style.borderColor = '#4CAF50'; // Hijau
         scoreCircleEl.style.color = '#4CAF50';
-        healthStatusText.innerText = "Keuangan Sehat! 👍";
+        healthStatusText.innerText = "Keuangan Sehat! 📌";
     } else if (score >= 20) {
         scoreCircleEl.style.borderColor = '#f39c12'; // Orange
         scoreCircleEl.style.color = '#f39c12';
