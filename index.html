@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DompetKopi - Catatan Keuangan</title>
+    <title>DompetKopi - Smart Finance</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
@@ -12,7 +12,7 @@
     <div class="container">
         <header>
             <h1>DompetKopi ☕</h1>
-            <p>Kelola uangmu, capai targetmu.</p>
+            <p>Analisa Cerdas Keuanganmu</p>
         </header>
 
         <section class="dashboard">
@@ -21,10 +21,31 @@
                 <h2 id="total-balance">Rp 0</h2>
             </div>
 
+            <div class="card health-card">
+                <div class="health-header">
+                    <h3>Kesehatan Keuangan</h3>
+                    <div class="score-circle" id="health-score-circle">
+                        <span id="health-score">0</span>
+                        <small>/100</small>
+                    </div>
+                </div>
+                <div class="health-details">
+                    <div class="detail-item">
+                        <small>Status Pengeluaran</small>
+                        <p id="expense-comparison">Menghitung...</p>
+                    </div>
+                    <div class="detail-item">
+                        <small>Sisa Uang Aman/Hari</small>
+                        <p id="daily-projection">Rp 0</p>
+                    </div>
+                </div>
+                <p class="health-advice" id="health-advice">Belum ada data cukup.</p>
+            </div>
+
             <div class="card target-card">
                 <div class="target-header">
                     <h3>Target Tabungan</h3>
-                    <button id="edit-target-btn" class="btn-small">Atur Target</button>
+                    <button id="edit-target-btn" class="btn-small">Atur</button>
                 </div>
                 <p class="target-amount">Target: <span id="target-value">Rp 0</span></p>
                 <div class="progress-container">
@@ -39,7 +60,7 @@
             <form id="form-transaksi">
                 <div class="form-group">
                     <label>Keterangan</label>
-                    <input type="text" id="text" placeholder="Contoh: Gaji, Beli Kopi..." required>
+                    <input type="text" id="text" placeholder="Contoh: Gaji, Makan Siang..." required>
                 </div>
                 <div class="form-group">
                     <label>Jumlah (Rp)</label>
@@ -59,12 +80,11 @@
 
         <section class="history">
             <h3>Riwayat Transaksi</h3>
-            <ul id="list" class="list">
-                </ul>
+            <ul id="list" class="list"></ul>
         </section>
 
         <footer>
-            <p>Dibuat oleh <strong>[Nama Kamu/Pengguna]</strong> &copy; 2025</p>
+            <p>&copy; 2025 DompetKopi Smart</p>
         </footer>
     </div>
 
