@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BudgetinAja</title>
+    <title>DompetKopi - Catatan Keuangan</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
@@ -11,41 +11,14 @@
 
     <div class="container">
         <header>
-            <h1>Budgetin Aja</h1>
+            <h1>DompetKopi ☕</h1>
             <p>Kelola uangmu, capai targetmu.</p>
         </header>
 
         <section class="dashboard">
-            
             <div class="card balance-card">
                 <h3>Saldo Saat Ini</h3>
                 <h2 id="total-balance">Rp 0</h2>
-            </div>
-
-            <div class="card health-card">
-                <div class="health-header">
-                    <div class="health-title">
-                        <h3>Kesehatan Keuangan</h3>
-                        <small id="health-status-text">Analisa berjalan...</small>
-                    </div>
-                    <div class="score-circle" id="score-circle">
-                        <span id="health-score">0</span>
-                        <small>/100</small>
-                    </div>
-                </div>
-                
-                <div class="health-stats">
-                    <div class="stat-item">
-                        <span class="stat-label">Vs Rata-rata 3 Bulan</span>
-                        <p id="comparison-text" class="stat-value">-</p>
-                    </div>
-                    
-                    <div class="stat-item">
-                        <span class="stat-label">Boleh Jajan /Hari</span>
-                        <p id="daily-projection" class="stat-value">Rp 0</p>
-                    </div>
-                </div>
-                <p class="health-advice" id="health-advice">Belum ada cukup data.</p>
             </div>
 
             <div class="card target-card">
@@ -53,7 +26,7 @@
                     <h3>Target Tabungan</h3>
                     <button id="edit-target-btn" class="btn-small">Atur Target</button>
                 </div>
-                <p class="target-amount">Goal: <span id="target-value">Rp 0</span></p>
+                <p class="target-amount">Target: <span id="target-value">Rp 0</span></p>
                 <div class="progress-container">
                     <div class="progress-bar" id="progress-bar"></div>
                 </div>
@@ -66,27 +39,21 @@
             <form id="form-transaksi">
                 <div class="form-group">
                     <label>Keterangan</label>
-                    <input type="text" id="text" placeholder="Contoh: Kembalian, Makan siang" required>
+                    <input type="text" id="text" placeholder="Contoh: Gaji, Beli Kopi..." required>
                 </div>
                 <div class="form-group">
                     <label>Jumlah (Rp)</label>
                     <input type="number" id="amount" placeholder="0" required>
                 </div>
                 <div class="form-group radio-group">
-                    <label class="radio-box">
-                        <input type="radio" name="type" value="pemasukan" checked> 
-                        <span>Pemasukan</span>
+                    <label>
+                        <input type="radio" name="type" value="pemasukan" checked> Pemasukan
                     </label>
-                    <label class="radio-box">
-                        <input type="radio" name="type" value="pengeluaran"> 
-                        <span>Pengeluaran</span>
+                    <label>
+                        <input type="radio" name="type" value="pengeluaran"> Pengeluaran
                     </label>
                 </div>
-                <div class="input-group">
-                    <label for="image-upload">Bukti Pembelian (Opsional)</label>
-                    <input type="file" id="image-upload" accept="image/*">
-                </div>
-                <button type="submit" class="btn-submit">Simpan Transaksi</button>
+                <button type="submit" class="btn-submit">Tambah Transaksi</button>
             </form>
         </section>
 
@@ -97,11 +64,10 @@
         </section>
 
         <footer>
-            <p>Dibuat oleh <strong>Binti & Eggi</strong> &copy; 2025</p>
+            <p>Dibuat oleh <strong>[Nama Kamu/Pengguna]</strong> &copy; 2025</p>
         </footer>
     </div>
 
-    <button onclick="scrollToTop()" id="scrollToTopBtn" title="Kembali ke Atas">↑</button>
     <script src="script.js"></script>
 </body>
 </html>
