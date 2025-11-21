@@ -8,6 +8,7 @@ const form = document.getElementById('form-transaksi');
 const textInput = document.getElementById('text');
 const amountInput = document.getElementById('amount');
 const editTargetBtn = document.getElementById('edit-target-btn');
+const imageInput = document.getElementById('image-upload'); 
 
 // Elemen Kesehatan Keuangan
 const healthScoreEl = document.getElementById('health-score');
@@ -16,6 +17,7 @@ const healthStatusText = document.getElementById('health-status-text');
 const comparisonText = document.getElementById('comparison-text');
 const dailyProjectionEl = document.getElementById('daily-projection');
 const healthAdviceEl = document.getElementById('health-advice');
+const scrollBtn = document.getElementById("scrollToTopBtn"); 
 
 // 2. STATE MANAGEMENT (Data LocalStorage)
 let transactions = JSON.parse(localStorage.getItem('transactions')) || [];
@@ -35,31 +37,45 @@ function generateID() {
     return Math.floor(Math.random() * 100000000);
 }
 
-// 5. FUNGSI UTAMA: Analisa Kesehatan Keuangan
+// 5. HELPER: Konversi File menjadi Base64 (untuk Bukti Transaksi)
+function convertFileToBase64(file) {
+    return new Promise((resolve, reject) => {
+        if (!file) {
+            return resolve(null);
+        }
+        // Batasan ukuran file (500 KB) untuk LocalStorage
+        if (file.size > 500000) { 
+            alert('Ukuran file terlalu besar (maks 500 KB). Bukti tidak disimpan.');
+            return resolve(null);
+        }
+        
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+    });
+}
+
+// 6. FUNGSI UTAMA: Analisa Kesehatan Keuangan
 function analyzeHealth(currentBalance) {
     const now = new Date();
     const currentMonth = now.getMonth(); 
     const currentYear = now.getFullYear();
 
-    // --- A. Filter Data ---
     let thisMonthIncome = 0;
     let thisMonthExpense = 0;
-    let pastExpenses = {}; // Menyimpan total pengeluaran bulan-bulan lalu
+    let pastExpenses = {};
     
     transactions.forEach(t => {
-        // Cek tanggal, jika data lama tidak punya tanggal, pakai tanggal hari ini
         const tDate = t.date ? new Date(t.date) : new Date();
         const tMonth = tDate.getMonth();
         const tYear = tDate.getFullYear();
         const key = `${tMonth}-${tYear}`;
 
-        // Hitung Pemasukan/Pengeluaran
         if (tMonth === currentMonth && tYear === currentYear) {
-            // Bulan Ini
             if (t.type === 'pemasukan') thisMonthIncome += t.amount;
             if (t.type === 'pengeluaran') thisMonthExpense += t.amount;
         } else {
-            // Bulan Lalu
             if (t.type === 'pengeluaran') {
                 if (!pastExpenses[key]) pastExpenses[key] = 0;
                 pastExpenses[key] += t.amount;
@@ -67,13 +83,10 @@ function analyzeHealth(currentBalance) {
         }
     });
 
-    // --- B. Hitung Skor (0-100) ---
-    // Rumus: Rasio saldo terhadap pemasukan total bulan ini
     let score = 0;
     if (thisMonthIncome > 0) {
         score = Math.round((currentBalance / thisMonthIncome) * 100);
     }
-    // Penyesuaian skor agar logis
     if (currentBalance <= 0 && thisMonthIncome > 0) score = 0;
     if (score > 100) score = 100;
     if (score < 0) score = 0;
@@ -82,20 +95,19 @@ function analyzeHealth(currentBalance) {
 
     // Warna & Status Berdasarkan Skor
     if (score >= 50) {
-        scoreCircleEl.style.borderColor = '#4CAF50'; // Hijau
+        scoreCircleEl.style.borderColor = '#4CAF50'; 
         scoreCircleEl.style.color = '#4CAF50';
         healthStatusText.innerText = "Keuangan Sehat! 👍";
     } else if (score >= 20) {
-        scoreCircleEl.style.borderColor = '#f39c12'; // Orange
+        scoreCircleEl.style.borderColor = '#f39c12'; 
         scoreCircleEl.style.color = '#f39c12';
         healthStatusText.innerText = "Perlu Berhemat ⚠️";
     } else {
-        scoreCircleEl.style.borderColor = '#e74c3c'; // Merah
+        scoreCircleEl.style.borderColor = '#e74c3c'; 
         scoreCircleEl.style.color = '#e74c3c';
         healthStatusText.innerText = "Kritis! 🚨";
     }
 
-    // --- C. Bandingkan dengan Rata-rata 3 Bulan Lalu ---
     const pastKeys = Object.keys(pastExpenses);
     const last3Months = pastKeys.slice(-3);
     
@@ -121,7 +133,6 @@ function analyzeHealth(currentBalance) {
         }
     }
 
-    // --- D. Proyeksi Sisa Uang (Safe to Spend) ---
     const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
     const todayDate = now.getDate();
     const remainingDays = daysInMonth - todayDate;
@@ -139,7 +150,7 @@ function analyzeHealth(currentBalance) {
     }
 }
 
-// 6. UPDATE UI UTAMA
+// 7. FUNGSI: UPDATE UI UTAMA (Saldo, Target, dan Riwayat)
 function updateUI() {
     // Hitung Total Saldo
     const amounts = transactions.map(transaction => 
@@ -147,7 +158,6 @@ function updateUI() {
     );
     const total = amounts.reduce((acc, item) => acc + item, 0);
 
-    // Update HTML Saldo & Target
     balanceEl.innerText = formatRupiah(total);
     targetValueEl.innerText = formatRupiah(savingsTarget);
 
@@ -162,57 +172,77 @@ function updateUI() {
     progressBar.style.width = `${percentage}%`;
     targetStatusEl.innerText = `${Math.round(percentage)}% Tercapai`;
 
-    // JALANKAN ANALISA KESEHATAN
     analyzeHealth(total);
 
-    // Render List Transaksi
+    // Render List Riwayat Transaksi
     listEl.innerHTML = '';
     transactions.forEach(transaction => {
         const sign = transaction.type === 'pengeluaran' ? '-' : '+';
         const itemClass = transaction.type === 'pengeluaran' ? 'minus' : 'plus';
+
+        // Logika untuk Tombol Bukti Pembelian
+        const imageIcon = transaction.image 
+            ? `<button class="view-receipt-btn" onclick="viewReceipt('${transaction.image}')">🖼️ Bukti</button>` 
+            : '';
         
         const item = document.createElement('li');
         item.classList.add(itemClass);
         item.innerHTML = `
-            ${transaction.text} 
-            <span>${sign}${formatRupiah(transaction.amount)} 
-            <button class="delete-btn" onclick="removeTransaction(${transaction.id})">x</button></span>
+            <div>
+                ${transaction.text} 
+                ${imageIcon}
+            </div>
+            <span>
+                ${sign}${formatRupiah(transaction.amount)} 
+                <button class="delete-btn" onclick="removeTransaction(${transaction.id})">x</button>
+            </span>
         `;
         listEl.appendChild(item);
     });
 
-    // Simpan ke Local Storage
     localStorage.setItem('transactions', JSON.stringify(transactions));
     localStorage.setItem('savingsTarget', JSON.stringify(savingsTarget));
 }
 
-// 7. TAMBAH TRANSAKSI
-function addTransaction(e) {
-    e.preventDefault();
+// 8. FUNGSI UTAMA: TAMBAH TRANSAKSI (ASYNC)
+async function addTransaction(e) {
+    // PENTING: MENCEGAH RELOAD HALAMAN
+    e.preventDefault(); 
 
     if (textInput.value.trim() === '' || amountInput.value.trim() === '') {
-        alert('Isi keterangan dan jumlah dulu ya!');
+        alert('Mohon isi keterangan dan jumlah');
         return;
     }
 
     const type = document.querySelector('input[name="type"]:checked').value;
+
+    // Proses File Upload (wajib pakai await)
+    const file = imageInput.files[0];
+    const base64Image = await convertFileToBase64(file); 
+
+    if (file && !base64Image) {
+        return;
+    }
 
     const transaction = {
         id: generateID(),
         text: textInput.value,
         amount: +amountInput.value,
         type: type,
-        date: new Date().toISOString() // Simpan tanggal untuk analisa bulanan
+        date: new Date().toISOString(),
+        image: base64Image 
     };
 
     transactions.push(transaction);
     updateUI();
 
+    // Reset Input
     textInput.value = '';
     amountInput.value = '';
+    imageInput.value = ''; 
 }
 
-// 8. HAPUS TRANSAKSI
+// 9. FUNGSI: HAPUS TRANSAKSI
 function removeTransaction(id) {
     if(confirm('Yakin hapus catatan ini?')) {
         transactions = transactions.filter(transaction => transaction.id !== id);
@@ -220,7 +250,7 @@ function removeTransaction(id) {
     }
 }
 
-// 9. EDIT TARGET
+// 10. FUNGSI: EDIT TARGET
 editTargetBtn.addEventListener('click', () => {
     const newTarget = prompt("Target tabungan baru (angka saja):", savingsTarget);
     if (newTarget && !isNaN(newTarget)) {
@@ -229,7 +259,36 @@ editTargetBtn.addEventListener('click', () => {
     }
 });
 
-// EVENT LISTENERS
+// 11. FUNGSI: Melihat Bukti Pembelian
+window.viewReceipt = function(base64Data) {
+    if (base64Data) {
+        const newWindow = window.open();
+        newWindow.document.write('<img src="' + base64Data + '" style="max-width: 100%; height: auto; display: block; margin: 0 auto;">');
+        newWindow.document.title = "Bukti Pembelian";
+    } else {
+        alert('Data bukti tidak valid.');
+    }
+}
+
+// 12. FUNGSI: Scroll to Top Logic
+window.onscroll = function() { scrollFunction() };
+
+function scrollFunction() {
+    if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+        scrollBtn.style.display = "flex"; 
+    } else {
+        scrollBtn.style.display = "none";
+    }
+}
+
+window.scrollToTop = function() {
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth' 
+    });
+}
+
+// EVENT LISTENERS (Pemasangan Listener)
 form.addEventListener('submit', addTransaction);
 window.removeTransaction = removeTransaction;
 
