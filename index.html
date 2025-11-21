@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DompetKopi Smart</title>
+    <title>Catatan Keuangan dan Tabungan</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
@@ -11,8 +11,8 @@
 
     <div class="container">
         <header>
-            <h1>DompetKopi ☕</h1>
-            <p>Kelola uangmu, pantau kesehatan dompetmu.</p>
+            <h1>Budgetin Aja</h1>
+            <p>Kelola uangmu, raih tabunganmu.</p>
         </header>
 
         <section class="dashboard">
@@ -82,6 +82,12 @@
                         <span>Pengeluaran</span>
                     </label>
                 </div>
+                
+                <div class="form-group">
+                    <label for="image-upload">Bukti Pembelian (Opsional)</label>
+                    <input type="file" id="image-upload" accept="image/*"> 
+                </div>
+
                 <button type="submit" class="btn-submit">Simpan Transaksi</button>
             </form>
         </section>
@@ -93,10 +99,12 @@
         </section>
 
         <footer>
-            <p>Dibuat oleh <strong>Web Developer Anda</strong> &copy; 2025</p>
+            <p>Dibuat oleh <strong>Binti & Eggi</strong> &copy; 2025</p>
         </footer>
     </div>
 
+    <button onclick="scrollToTop()" id="scrollToTopBtn" title="Kembali ke Atas">↑</button>
+    
     <script src="script.js"></script>
 </body>
 </html>
