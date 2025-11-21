@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DompetKopi - Smart Finance</title>
+    <title>DompetKopi Smart</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
@@ -12,10 +12,11 @@
     <div class="container">
         <header>
             <h1>DompetKopi ☕</h1>
-            <p>Analisa Cerdas Keuanganmu</p>
+            <p>Kelola uangmu, pantau kesehatan dompetmu.</p>
         </header>
 
         <section class="dashboard">
+            
             <div class="card balance-card">
                 <h3>Saldo Saat Ini</h3>
                 <h2 id="total-balance">Rp 0</h2>
@@ -23,31 +24,36 @@
 
             <div class="card health-card">
                 <div class="health-header">
-                    <h3>Kesehatan Keuangan</h3>
-                    <div class="score-circle" id="health-score-circle">
+                    <div class="health-title">
+                        <h3>Kesehatan Keuangan</h3>
+                        <small id="health-status-text">Analisa berjalan...</small>
+                    </div>
+                    <div class="score-circle" id="score-circle">
                         <span id="health-score">0</span>
                         <small>/100</small>
                     </div>
                 </div>
-                <div class="health-details">
-                    <div class="detail-item">
-                        <small>Status Pengeluaran</small>
-                        <p id="expense-comparison">Menghitung...</p>
+                
+                <div class="health-stats">
+                    <div class="stat-item">
+                        <span class="stat-label">Vs Rata-rata 3 Bulan</span>
+                        <p id="comparison-text" class="stat-value">-</p>
                     </div>
-                    <div class="detail-item">
-                        <small>Sisa Uang Aman/Hari</small>
-                        <p id="daily-projection">Rp 0</p>
+                    
+                    <div class="stat-item">
+                        <span class="stat-label">Boleh Jajan /Hari</span>
+                        <p id="daily-projection" class="stat-value">Rp 0</p>
                     </div>
                 </div>
-                <p class="health-advice" id="health-advice">Belum ada data cukup.</p>
+                <p class="health-advice" id="health-advice">Belum ada cukup data.</p>
             </div>
 
             <div class="card target-card">
                 <div class="target-header">
                     <h3>Target Tabungan</h3>
-                    <button id="edit-target-btn" class="btn-small">Atur</button>
+                    <button id="edit-target-btn" class="btn-small">Atur Target</button>
                 </div>
-                <p class="target-amount">Target: <span id="target-value">Rp 0</span></p>
+                <p class="target-amount">Goal: <span id="target-value">Rp 0</span></p>
                 <div class="progress-container">
                     <div class="progress-bar" id="progress-bar"></div>
                 </div>
@@ -60,31 +66,34 @@
             <form id="form-transaksi">
                 <div class="form-group">
                     <label>Keterangan</label>
-                    <input type="text" id="text" placeholder="Contoh: Gaji, Makan Siang..." required>
+                    <input type="text" id="text" placeholder="Contoh: Gaji, Beli Kopi..." required>
                 </div>
                 <div class="form-group">
                     <label>Jumlah (Rp)</label>
                     <input type="number" id="amount" placeholder="0" required>
                 </div>
                 <div class="form-group radio-group">
-                    <label>
-                        <input type="radio" name="type" value="pemasukan" checked> Pemasukan
+                    <label class="radio-box">
+                        <input type="radio" name="type" value="pemasukan" checked> 
+                        <span>Pemasukan</span>
                     </label>
-                    <label>
-                        <input type="radio" name="type" value="pengeluaran"> Pengeluaran
+                    <label class="radio-box">
+                        <input type="radio" name="type" value="pengeluaran"> 
+                        <span>Pengeluaran</span>
                     </label>
                 </div>
-                <button type="submit" class="btn-submit">Tambah Transaksi</button>
+                <button type="submit" class="btn-submit">Simpan Transaksi</button>
             </form>
         </section>
 
         <section class="history">
             <h3>Riwayat Transaksi</h3>
-            <ul id="list" class="list"></ul>
+            <ul id="list" class="list">
+                </ul>
         </section>
 
         <footer>
-            <p>&copy; 2025 DompetKopi Smart</p>
+            <p>Dibuat oleh <strong>Web Developer Anda</strong> &copy; 2025</p>
         </footer>
     </div>
 
