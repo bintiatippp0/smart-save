@@ -8,7 +8,7 @@ const form = document.getElementById('form-transaksi');
 const textInput = document.getElementById('text');
 const amountInput = document.getElementById('amount');
 const editTargetBtn = document.getElementById('edit-target-btn');
-const imageInput = document.getElementById('image-upload');
+const imageInput = document.getElementById('image-upload'); 
 
 // Elemen Kesehatan Keuangan
 const healthScoreEl = document.getElementById('health-score');
@@ -17,7 +17,7 @@ const healthStatusText = document.getElementById('health-status-text');
 const comparisonText = document.getElementById('comparison-text');
 const dailyProjectionEl = document.getElementById('daily-projection');
 const healthAdviceEl = document.getElementById('health-advice');
-const scrollBtn = document.getElementById("scrollToTopBtn");
+const scrollBtn = document.getElementById("scrollToTopBtn"); 
 
 // 2. STATE MANAGEMENT (Data LocalStorage)
 let transactions = JSON.parse(localStorage.getItem('transactions')) || [];
@@ -62,10 +62,9 @@ function analyzeHealth(currentBalance) {
     const currentMonth = now.getMonth(); 
     const currentYear = now.getFullYear();
 
-    // --- A. Filter Data ---
     let thisMonthIncome = 0;
     let thisMonthExpense = 0;
-    let pastExpenses = {}; // Menyimpan total pengeluaran bulan-bulan lalu
+    let pastExpenses = {};
     
     transactions.forEach(t => {
         const tDate = t.date ? new Date(t.date) : new Date();
@@ -74,11 +73,9 @@ function analyzeHealth(currentBalance) {
         const key = `${tMonth}-${tYear}`;
 
         if (tMonth === currentMonth && tYear === currentYear) {
-            // Bulan Ini
             if (t.type === 'pemasukan') thisMonthIncome += t.amount;
             if (t.type === 'pengeluaran') thisMonthExpense += t.amount;
         } else {
-            // Bulan Lalu
             if (t.type === 'pengeluaran') {
                 if (!pastExpenses[key]) pastExpenses[key] = 0;
                 pastExpenses[key] += t.amount;
@@ -90,7 +87,6 @@ function analyzeHealth(currentBalance) {
     if (thisMonthIncome > 0) {
         score = Math.round((currentBalance / thisMonthIncome) * 100);
     }
-    // Penyesuaian skor agar logis
     if (currentBalance <= 0 && thisMonthIncome > 0) score = 0;
     if (score > 100) score = 100;
     if (score < 0) score = 0;
@@ -99,15 +95,15 @@ function analyzeHealth(currentBalance) {
 
     // Warna & Status Berdasarkan Skor
     if (score >= 50) {
-        scoreCircleEl.style.borderColor = '#4CAF50'; // Hijau
+        scoreCircleEl.style.borderColor = '#4CAF50'; 
         scoreCircleEl.style.color = '#4CAF50';
-        healthStatusText.innerText = "Keuangan Sehat! 📌";
+        healthStatusText.innerText = "Keuangan Sehat! 👍";
     } else if (score >= 20) {
-        scoreCircleEl.style.borderColor = '#f39c12'; // Orange
+        scoreCircleEl.style.borderColor = '#f39c12'; 
         scoreCircleEl.style.color = '#f39c12';
         healthStatusText.innerText = "Perlu Berhemat ⚠️";
     } else {
-        scoreCircleEl.style.borderColor = '#e74c3c'; // Merah
+        scoreCircleEl.style.borderColor = '#e74c3c'; 
         scoreCircleEl.style.color = '#e74c3c';
         healthStatusText.innerText = "Kritis! 🚨";
     }
@@ -154,7 +150,7 @@ function analyzeHealth(currentBalance) {
     }
 }
 
-// 7. UPDATE UI UTAMA
+// 7. FUNGSI: UPDATE UI UTAMA
 function updateUI() {
     const amounts = transactions.map(transaction => 
         transaction.type === 'pengeluaran' ? -transaction.amount : transaction.amount
@@ -187,7 +183,7 @@ function updateUI() {
             ? `<button class="view-receipt-btn" onclick="viewReceipt('${transaction.image}')">🖼️ Bukti</button>` 
             : '';
         
-       const item = document.createElement('li');
+        const item = document.createElement('li');
         item.classList.add(itemClass);
         item.innerHTML = `
             <div>
@@ -211,7 +207,7 @@ async function addTransaction(e) {
     e.preventDefault();
 
     if (textInput.value.trim() === '' || amountInput.value.trim() === '') {
-        alert('Isi keterangan dan jumlah dulu ya!');
+        alert('Mohon isi keterangan dan jumlah');
         return;
     }
 
@@ -225,14 +221,14 @@ async function addTransaction(e) {
         // Jika file dipilih tapi gagal karena batasan ukuran, berhenti di sini
         return;
     }
-    
+
     const transaction = {
         id: generateID(),
         text: textInput.value,
         amount: +amountInput.value,
         type: type,
-        date: new Date().toISOString() 
-        image: base64Image 
+        date: new Date().toISOString(),
+        image: base64Image // Simpan data Base64
     };
 
     transactions.push(transaction);
@@ -243,7 +239,7 @@ async function addTransaction(e) {
     imageInput.value = ''; // Reset input file setelah berhasil
 }
 
-// 9. HAPUS TRANSAKSI
+// 9. FUNGSI: HAPUS TRANSAKSI
 function removeTransaction(id) {
     if(confirm('Yakin hapus catatan ini?')) {
         transactions = transactions.filter(transaction => transaction.id !== id);
@@ -251,7 +247,7 @@ function removeTransaction(id) {
     }
 }
 
-// 10. EDIT TARGET
+// 10. FUNGSI: EDIT TARGET
 editTargetBtn.addEventListener('click', () => {
     const newTarget = prompt("Target tabungan baru (angka saja):", savingsTarget);
     if (newTarget && !isNaN(newTarget)) {
@@ -296,25 +292,3 @@ window.removeTransaction = removeTransaction;
 
 // Inisialisasi awal
 updateUI();
-
-const scrollBtn = document.getElementById("scrollToTopBtn");
-
-// Tampilkan atau sembunyikan tombol saat user scroll
-window.onscroll = function() { scrollFunction() };
-
-function scrollFunction() {
-    // Tombol akan muncul jika scroll lebih dari 300px dari atas
-    if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
-        scrollBtn.style.display = "block";
-    } else {
-        scrollBtn.style.display = "none";
-    }
-}
-
-// Fungsi yang dipanggil saat tombol diklik: Menggulir halaman ke atas
-window.scrollToTop = function() {
-    window.scrollTo({
-        top: 0,
-        behavior: 'smooth' // Membuat pergerakan scroll menjadi halus
-    });
-}
