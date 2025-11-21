@@ -1,4 +1,4 @@
-// 1. Seleksi Elemen DOM
+// 1. SELEKSI DOM
 const balanceEl = document.getElementById('total-balance');
 const targetValueEl = document.getElementById('target-value');
 const progressBar = document.getElementById('progress-bar');
@@ -9,18 +9,19 @@ const textInput = document.getElementById('text');
 const amountInput = document.getElementById('amount');
 const editTargetBtn = document.getElementById('edit-target-btn');
 
-// Elemen Baru untuk Kesehatan Keuangan
+// Elemen Kesehatan Keuangan
 const healthScoreEl = document.getElementById('health-score');
-const healthCircle = document.getElementById('health-score-circle');
-const expenseCompareEl = document.getElementById('expense-comparison');
-const dailyProjEl = document.getElementById('daily-projection');
+const scoreCircleEl = document.getElementById('score-circle');
+const healthStatusText = document.getElementById('health-status-text');
+const comparisonText = document.getElementById('comparison-text');
+const dailyProjectionEl = document.getElementById('daily-projection');
 const healthAdviceEl = document.getElementById('health-advice');
 
-// 2. State Management
+// 2. STATE MANAGEMENT (Data LocalStorage)
 let transactions = JSON.parse(localStorage.getItem('transactions')) || [];
 let savingsTarget = JSON.parse(localStorage.getItem('savingsTarget')) || 1000000;
 
-// 3. Fungsi Format Rupiah
+// 3. HELPER: Format Rupiah
 function formatRupiah(angka) {
     return new Intl.NumberFormat('id-ID', {
         style: 'currency',
@@ -29,83 +30,128 @@ function formatRupiah(angka) {
     }).format(angka);
 }
 
-// 4. LOGIKA BARU: Analisa Kesehatan Keuangan
-function analyzeHealth(totalBalance, totalIncome, totalExpense) {
-    // A. Hitung Skor (0 - 100)
-    // Logika: Jika saldo > 50% dari pemasukan = Bagus. Jika saldo minus = 0.
+// 4. HELPER: Generate ID
+function generateID() {
+    return Math.floor(Math.random() * 100000000);
+}
+
+// 5. FUNGSI UTAMA: Analisa Kesehatan Keuangan
+function analyzeHealth(currentBalance) {
+    const now = new Date();
+    const currentMonth = now.getMonth(); 
+    const currentYear = now.getFullYear();
+
+    // --- A. Filter Data ---
+    let thisMonthIncome = 0;
+    let thisMonthExpense = 0;
+    let pastExpenses = {}; // Menyimpan total pengeluaran bulan-bulan lalu
+    
+    transactions.forEach(t => {
+        // Cek tanggal, jika data lama tidak punya tanggal, pakai tanggal hari ini
+        const tDate = t.date ? new Date(t.date) : new Date();
+        const tMonth = tDate.getMonth();
+        const tYear = tDate.getFullYear();
+        const key = `${tMonth}-${tYear}`;
+
+        // Hitung Pemasukan/Pengeluaran
+        if (tMonth === currentMonth && tYear === currentYear) {
+            // Bulan Ini
+            if (t.type === 'pemasukan') thisMonthIncome += t.amount;
+            if (t.type === 'pengeluaran') thisMonthExpense += t.amount;
+        } else {
+            // Bulan Lalu
+            if (t.type === 'pengeluaran') {
+                if (!pastExpenses[key]) pastExpenses[key] = 0;
+                pastExpenses[key] += t.amount;
+            }
+        }
+    });
+
+    // --- B. Hitung Skor (0-100) ---
+    // Rumus: Rasio saldo terhadap pemasukan total bulan ini
     let score = 0;
-    if (totalIncome > 0) {
-        const savingRatio = (totalBalance / totalIncome) * 100;
-        // Skor maksimal 100, minimal 0
-        score = Math.min(100, Math.max(0, Math.round(savingRatio))); 
+    if (thisMonthIncome > 0) {
+        score = Math.round((currentBalance / thisMonthIncome) * 100);
     }
-    
-    // Update UI Skor
+    // Penyesuaian skor agar logis
+    if (currentBalance <= 0 && thisMonthIncome > 0) score = 0;
+    if (score > 100) score = 100;
+    if (score < 0) score = 0;
+
     healthScoreEl.innerText = score;
-    
-    // Warna Lingkaran Berdasarkan Skor
-    if (score >= 70) healthCircle.style.background = "#4CAF50"; // Hijau
-    else if (score >= 40) healthCircle.style.background = "#f39c12"; // Orange
-    else healthCircle.style.background = "#e74c3c"; // Merah
 
-    // B. Perbandingan Pengeluaran (Vs Batas Ideal 50% Pemasukan)
-    // Karena belum ada data 3 bulan, kita bandingkan dengan "Ideal"
-    const idealExpense = totalIncome * 0.5; 
-    let compareText = "";
-    
-    if (totalExpense > totalIncome) {
-        compareText = "Boros! > Pemasukan";
-        expenseCompareEl.style.color = "#e74c3c";
-    } else if (totalExpense > idealExpense) {
-        compareText = "Waspada (Tinggi)";
-        expenseCompareEl.style.color = "#f39c12";
+    // Warna & Status Berdasarkan Skor
+    if (score >= 50) {
+        scoreCircleEl.style.borderColor = '#4CAF50'; // Hijau
+        scoreCircleEl.style.color = '#4CAF50';
+        healthStatusText.innerText = "Keuangan Sehat! 👍";
+    } else if (score >= 20) {
+        scoreCircleEl.style.borderColor = '#f39c12'; // Orange
+        scoreCircleEl.style.color = '#f39c12';
+        healthStatusText.innerText = "Perlu Berhemat ⚠️";
     } else {
-        compareText = "Hemat (Aman)";
-        expenseCompareEl.style.color = "#4CAF50";
+        scoreCircleEl.style.borderColor = '#e74c3c'; // Merah
+        scoreCircleEl.style.color = '#e74c3c';
+        healthStatusText.innerText = "Kritis! 🚨";
     }
-    expenseCompareEl.innerText = compareText;
 
-    // C. Proyeksi Akhir Bulan (Sisa Uang Aman per Hari)
-    const date = new Date();
-    const day = date.getDate();
-    const daysInMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
-    const remainingDays = daysInMonth - day;
+    // --- C. Bandingkan dengan Rata-rata 3 Bulan Lalu ---
+    const pastKeys = Object.keys(pastExpenses);
+    const last3Months = pastKeys.slice(-3);
+    
+    let avgExpense = 0;
+    if (last3Months.length > 0) {
+        const totalPast = last3Months.reduce((acc, key) => acc + pastExpenses[key], 0);
+        avgExpense = totalPast / last3Months.length;
+    }
 
-    if (remainingDays > 0 && totalBalance > 0) {
-        const dailySafe = totalBalance / remainingDays;
-        dailyProjEl.innerText = formatRupiah(dailySafe);
-        healthAdviceEl.innerText = `Kamu bisa jajan ${formatRupiah(dailySafe)} per hari sampai akhir bulan.`;
-    } else if (totalBalance <= 0) {
-        dailyProjEl.innerText = "Rp 0";
-        healthAdviceEl.innerText = "Saldo habis! Stop pengeluaran tambahan.";
+    if (avgExpense === 0) {
+        comparisonText.innerText = "Data baru";
+        comparisonText.style.color = "#888";
     } else {
-        dailyProjEl.innerText = "-";
-        healthAdviceEl.innerText = "Akhir bulan! Waktunya gajian?";
+        const diff = thisMonthExpense - avgExpense;
+        const percent = Math.round((diff / avgExpense) * 100);
+
+        if (diff > 0) {
+            comparisonText.innerText = `Naik ${percent}% 🔴`;
+            comparisonText.style.color = '#e74c3c';
+        } else {
+            comparisonText.innerText = `Turun ${Math.abs(percent)}% 🟢`;
+            comparisonText.style.color = '#4CAF50';
+        }
+    }
+
+    // --- D. Proyeksi Sisa Uang (Safe to Spend) ---
+    const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+    const todayDate = now.getDate();
+    const remainingDays = daysInMonth - todayDate;
+
+    if (currentBalance <= 0) {
+        dailyProjectionEl.innerText = "Rp 0";
+        healthAdviceEl.innerText = "Saldo habis! Stop pengeluaran.";
+    } else if (remainingDays <= 0) {
+        dailyProjectionEl.innerText = "Akhir Bulan";
+        healthAdviceEl.innerText = "Waktunya gajian?";
+    } else {
+        const safeDaily = currentBalance / remainingDays;
+        dailyProjectionEl.innerText = formatRupiah(safeDaily);
+        healthAdviceEl.innerText = `Agar cukup, batasi jajan ${formatRupiah(safeDaily)} per hari.`;
     }
 }
 
-// 5. Fungsi Update UI
+// 6. UPDATE UI UTAMA
 function updateUI() {
+    // Hitung Total Saldo
     const amounts = transactions.map(transaction => 
         transaction.type === 'pengeluaran' ? -transaction.amount : transaction.amount
     );
-    
     const total = amounts.reduce((acc, item) => acc + item, 0);
 
-    // Hitung Total Pemasukan & Pengeluaran Terpisah untuk Analisa
-    const totalIncome = transactions
-        .filter(t => t.type === 'pemasukan')
-        .reduce((acc, t) => acc + t.amount, 0);
-        
-    const totalExpense = transactions
-        .filter(t => t.type === 'pengeluaran')
-        .reduce((acc, t) => acc + t.amount, 0);
-
-    // Update Elemen Balance
+    // Update HTML Saldo & Target
     balanceEl.innerText = formatRupiah(total);
     targetValueEl.innerText = formatRupiah(savingsTarget);
-    
-    // Progress Bar
+
+    // Update Progress Bar
     let percentage = 0;
     if (savingsTarget > 0 && total > 0) {
         percentage = (total / savingsTarget) * 100;
@@ -117,16 +163,16 @@ function updateUI() {
     targetStatusEl.innerText = `${Math.round(percentage)}% Tercapai`;
 
     // JALANKAN ANALISA KESEHATAN
-    analyzeHealth(total, totalIncome, totalExpense);
+    analyzeHealth(total);
 
-    // Render List
+    // Render List Transaksi
     listEl.innerHTML = '';
     transactions.forEach(transaction => {
         const sign = transaction.type === 'pengeluaran' ? '-' : '+';
         const itemClass = transaction.type === 'pengeluaran' ? 'minus' : 'plus';
+        
         const item = document.createElement('li');
         item.classList.add(itemClass);
-        
         item.innerHTML = `
             ${transaction.text} 
             <span>${sign}${formatRupiah(transaction.amount)} 
@@ -135,45 +181,57 @@ function updateUI() {
         listEl.appendChild(item);
     });
 
+    // Simpan ke Local Storage
     localStorage.setItem('transactions', JSON.stringify(transactions));
     localStorage.setItem('savingsTarget', JSON.stringify(savingsTarget));
 }
 
-// 6. Tambah Transaksi
+// 7. TAMBAH TRANSAKSI
 function addTransaction(e) {
     e.preventDefault();
-    if (textInput.value.trim() === '' || amountInput.value.trim() === '') return;
+
+    if (textInput.value.trim() === '' || amountInput.value.trim() === '') {
+        alert('Isi keterangan dan jumlah dulu ya!');
+        return;
+    }
 
     const type = document.querySelector('input[name="type"]:checked').value;
 
     const transaction = {
-        id: Math.floor(Math.random() * 100000000),
+        id: generateID(),
         text: textInput.value,
         amount: +amountInput.value,
-        type: type
+        type: type,
+        date: new Date().toISOString() // Simpan tanggal untuk analisa bulanan
     };
 
     transactions.push(transaction);
     updateUI();
+
     textInput.value = '';
     amountInput.value = '';
 }
 
-// 7. Hapus Transaksi
+// 8. HAPUS TRANSAKSI
 function removeTransaction(id) {
-    transactions = transactions.filter(transaction => transaction.id !== id);
-    updateUI();
+    if(confirm('Yakin hapus catatan ini?')) {
+        transactions = transactions.filter(transaction => transaction.id !== id);
+        updateUI();
+    }
 }
 
-// 8. Edit Target
+// 9. EDIT TARGET
 editTargetBtn.addEventListener('click', () => {
-    const newTarget = prompt("Masukkan target baru:", savingsTarget);
+    const newTarget = prompt("Target tabungan baru (angka saja):", savingsTarget);
     if (newTarget && !isNaN(newTarget)) {
         savingsTarget = +newTarget;
         updateUI();
     }
 });
 
+// EVENT LISTENERS
 form.addEventListener('submit', addTransaction);
 window.removeTransaction = removeTransaction;
+
+// Inisialisasi awal
 updateUI();
